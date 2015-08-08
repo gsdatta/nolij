@@ -1,24 +1,40 @@
 {% extends "layout2.html" %}
 {% block body %}
 <div class="container">
-    {% if teams %}
-        {% for team in teams %}
-        <p><a href="{{ url_for('wiki.team_details', team_slug=team.slug) }}">{{ team.name }}</a></p>
-        {% endfor %}
-    {% else %}
-        <p>You don't have any teams, create one now!</p>
-    {% endif %}
-    <form action="{{ url_for('wiki.add_team') }}" method="POST">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" name="name" class="form-control">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="well">
+                <h1>Welcome, {{ current_user.name }}</h1>
+                <p>Select a team at the right to begin.<p>
+                <p>There are currently {{ teams|length }} teams at {{ current_user.company.name }}</p>
+                <p>You can also create a team below:</p>
+                <form action="{{ url_for('wiki.add_team') }}" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="wikis">Wikis</label>
+                        <input type="text" name="wikis" class="form-control">
+                        <p class="help-text">Comma separated list of wikis</p>
+                    </div>
+                    <input type="submit" class="form-control">
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="wikis">Wikis</label>
-            <input type="text" name="wikis" class="form-control">
-            <p class="help-text">Comma separated list of wikis</p>
+        <div class="col-sm-6">
+            {% if teams %}
+                {% for team in teams %}
+                    <div class="list-group">
+                        <a href="{{ url_for('wiki.team_details', team_slug=team.slug) }}" class="list-group-item active">
+                            <h4 class="list-group-item-heading">{{team.name}}</h4>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>You don't have any teams, create one now!</p>
+            {% endif %}
         </div>
-        <input type="submit" class="form-control">
-    </form>
+    </div>
 </div>
 {% endblock %}
