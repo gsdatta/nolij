@@ -1,0 +1,24 @@
+{% extends "layout2.html" %}
+{% block body %}
+<div class="container">
+    {% if teams %}
+        {% for team in teams %}
+        <p><a href="{{ url_for('wiki.team_details', team_slug=team.slug) }}">{{ team.name }}</a></p>
+        {% endfor %}
+    {% else %}
+        <p>You don't have any teams, create one now!</p>
+    {% endif %}
+    <form action="{{ url_for('wiki.add_team') }}" method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="wikis">Wikis</label>
+            <input type="text" name="wikis" class="form-control">
+            <p class="help-text">Comma separated list of wikis</p>
+        </div>
+        <input type="submit" class="form-control">
+    </form>
+</div>
+{% endblock %}

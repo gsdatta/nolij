@@ -1,0 +1,28 @@
+{% extends "layout2.html" %}
+{% block body %}
+<div class="container">
+    {% if wiki.pages %}
+    <div class="row">
+        {% for page in wiki.pages %}
+        <div class="col-sm-4"> 
+            <h1>{{ wiki.name }}</h1>
+            <p>{{ page.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p>You don't have any pages, create one now!</p>
+    {% endif %}
+    <form action="{{ url_for('wiki.team_details', team_slug=team.slug) }}" method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" name="description" class="form-control">
+        </div>
+        <input type="submit" class="form-control">
+    </form>
+</div>
+{% endblock %}

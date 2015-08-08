@@ -18,11 +18,10 @@ def index():
     return render_template("root/index.html")
 
 
-@ROOT.route('signup', methods=['GET', 'POST'])
-def signup():
+@ROOT.route('company_signup', methods=['GET', 'POST'])
+def company_signup():
     if request.method == 'GET':
-        current_app.logger.info('Entering signup')
-        return render_template("root/signup.html", form=ExtendedRegisterForm())
+        return render_template("root/signup.html")
 
     if request.method == 'POST':
         comp = Company.query.filter_by(domain=request.form['company_domain']).first()
@@ -31,22 +30,37 @@ def signup():
             db.session.add(comp)
             db.session.commit()
 
-            user = user_datastore.create_user(email=request.form['email'], password=request.form['password'], name=request.form['user_name'], company_id=comp.id)
-            db.session.add(user)
-            db.session.commit()
+        return redirect(url_for('root.user_signup'))
 
-            return redirect(url_for('root.login'))
-        else:
-            flash('Company already exists with that domain')
-            return render_template("root/signup.html")
+
+@ROOT.route('user_signup', methods=['GET', 'POST'])
+def user_signup():
+    if request.method == 'GET':
+        return render_template('root/user_signup.html')
+
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        name = request.form['user_name']
+        domain = email.split('@')[1]
+
+        comp = Company.query.filter_by(domain=domain).first()
+        if comp is None:
+            flash("Company doesn't exist, please create one first")
+            return redirect(url_for('root.company_signup'))
+
+        user = user_datastore.create_user(email=email, password=password, name=name, company_id=comp.id)
+        #if User.query.filter_by(company_id=comp.id).count() == 0:
+            #user.administrator = True
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('root.login'))
 
 
 @ROOT.route('login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    current_app.logger.info(form.email.errors)
     if form.validate_on_submit():
-        current_app.logger.info('VALIDATING')
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             if verify_password(form.password.data.encode('utf-8'), user.password):
