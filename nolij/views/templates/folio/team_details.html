@@ -1,0 +1,76 @@
+{% extends "layout2.html" %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="well">
+                <h1>Welcome, {{ current_user.name }}</h1>
+                <p>Select a folio at the right to begin.<p>
+                <p>There are currently {{ folios|length }} folios n this team.</p>
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                   Add a new Folio 
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <form action="{{ url_for('folio.team_details', team_slug=team.slug) }}" method="POST">
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text" name="name" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <input type="text" name="description" class="form-control">
+                                    </div>
+                                    <input type="submit" class="form-control">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% if current_user in team.administrators %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingTwo">
+                            <h4 class="panel-title">
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Add a user to this team
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                            <div class="panel-body">
+                                <form action="{{ url_for('folio.team_details', team_slug=team.slug) }}" method="POST">
+                                    <input type="hidden" name="add_user" value="user" />
+                                    <div class="form-group">
+                                        <label for="users">Users (Comma Separated)</label>
+                                        <input type="text" name="users" class="form-control">
+                                    </div>
+                                    <input type="submit" class="form-control">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+        {% if folios %}
+            {% for folio in folios %}
+            <div class="list-group">
+                <a href="{{ url_for('folio.folio_details', folio_slug=folio.slug, team_slug=team.slug) }}" class="list-group-item active">
+                    <h4 class="list-group-item-heading">{{folio.name}}</h4>
+                    <p class="list-group-item-text">{{ folio.description }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+            <p>You don't have any folios, create one now!</p>
+        {% endif %}
+</div>
+{% endblock %}

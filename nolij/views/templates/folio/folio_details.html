@@ -1,11 +1,11 @@
 {% extends "layout2.html" %}
 {% block body %}
 <div class="container">
-    {% if wiki.pages %}
+    {% if folio.pages %}
     <div class="row">
-        {% for page in wiki.pages %}
+        {% for page in folio.pages %}
         <div class="col-sm-4"> 
-            <h1>{{ wiki.name }}</h1>
+            <h1>{{ folio.name }}</h1>
             <p>{{ page.name }}</p>
         </div>
         {% endfor %}
@@ -13,7 +13,7 @@
     {% else %}
         <p>You don't have any pages, create one now!</p>
     {% endif %}
-    <form action="{{ url_for('wiki.team_details', team_slug=team.slug) }}" method="POST">
+    <form action="{{ url_for('folio.team_details', team_slug=team.slug) }}" method="POST">
         <div class="form-group">
             <label for="name">Name</label>
             <input type="text" name="name" class="form-control">

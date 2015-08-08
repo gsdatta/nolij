@@ -9,9 +9,9 @@ team_members = db.Table('team_members',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('studygroup_id', db.Integer(), db.ForeignKey('team.id')))
 
-wiki_administrators = db.Table('wiki_adminstrators' ,
+folio_administrators = db.Table('folio_adminstrators' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-        db.Column('wiki_id', db.Integer(), db.ForeignKey('wiki.id')))
+        db.Column('folio_id', db.Integer(), db.ForeignKey('folio.id')))
 
 team_administrators = db.Table('team_administrators' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -28,14 +28,20 @@ def slugify(value):
 
 
 class Team(db.Model):
+    """
+    A team provides the fundamental structure of a company. Each team is comprised of
+    "teams". These teams can be anything generic such as 'Onboarding', or even
+    'Engineering'. Each team contains its own folios and projects.
+    """
+
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
     members = db.relationship("User", secondary=team_members)
     slug = db.Column(db.String(), nullable=False)
     company_id = db.Column(db.Integer(), db.ForeignKey("company.id"))
     company = db.relationship("Company")
-    #main_wiki_id = db.Column(db.Integer(), db.ForeignKey("wiki.id"), nullable=True)
-    #main_wiki = db.relationship("Wiki")
+    #main_folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=True)
+    #main_folio = db.relationship("Folio")
 
     administrators = db.relationship("User", secondary=team_administrators)
 
@@ -46,7 +52,12 @@ class Team(db.Model):
         db.session.commit()
 
 
-class Wiki(db.Model):
+class Folio(db.Model):
+    """
+    A folio contains the actual nolij within a team. A folio can have projects or
+    pages tied to it.
+    """
+
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
     team_id = db.Column(db.Integer(), db.ForeignKey("team.id"))
@@ -55,9 +66,9 @@ class Wiki(db.Model):
 
     description = db.Column(db.String(), nullable=True)
 
-    administrators = db.relationship("User", secondary=wiki_administrators)
+    administrators = db.relationship("User", secondary=folio_administrators)
 
-    main_wiki = db.Column(db.Boolean(), default=False, nullable=False)
+    main_folio = db.Column(db.Boolean(), default=False, nullable=False)
 
     def generate_slug(self):
         if not self.slug:
@@ -65,8 +76,8 @@ class Wiki(db.Model):
         success = False
         i = 2
         while not success:
-            wiki = Wiki.query.filter_by(slug=self.slug).first()
-            if wiki is None:
+            folio = Folio.query.filter_by(slug=self.slug).first()
+            if folio is None:
                 success = True
             else:
                 self.slug = self.slug + '-%s' % i
@@ -75,8 +86,10 @@ class Wiki(db.Model):
 class Page(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
 
-    wiki_id = db.Column(db.Integer(), db.ForeignKey("wiki.id"))
-    wiki = db.relationship("Wiki", backref=db.backref("pages"))
+    folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=False)
+    folio = db.relationship("Folio", backref=db.backref("pages"))
+
+
     name = db.Column(db.String(), nullable=False)
     text = db.Column(db.Text(), nullable=True)
 
@@ -86,6 +99,6 @@ class Page(db.Model):
     date_modified = db.Column(db.DateTime(), onupdate=datetime.datetime.now, nullable=False)
 
 
-@listens_for(Wiki, 'before_insert')
-def wiki_slug(mapper, connect, target):
+@listens_for(Folio, 'before_insert')
+def folio_slug(mapper, connect, target):
     target.generate_slug()

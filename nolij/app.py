@@ -24,14 +24,14 @@ def create_app(name, env):
         logging.config.dictConfig(app.config['LOGGING'])
 
     from nolij.root.views import ROOT
-    from nolij.wiki.views import WIKI
+    from nolij.folio.views import WIKI
 
     app.register_blueprint(ROOT, url_prefix='/')
-    app.register_blueprint(WIKI, url_prefix='/wiki')
+    app.register_blueprint(WIKI, url_prefix='/folio')
 
     from nolij.auth.models import User, user_datastore
     from nolij.company.models import Company
-    from nolij.wiki.models import Team, Wiki, Page
+    from nolij.folio.models import Team, Folio, Page
 
     # Initialize tables and database session
     db.init_app(app)
