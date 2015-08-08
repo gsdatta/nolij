@@ -1,8 +1,12 @@
-from flask import Blueprint, render_template, request, current_app, jsonify, flash
+from flask import Blueprint, render_template, request, current_app, jsonify, flash, redirect, url_for
 from nolij.auth.forms import ExtendedRegisterForm
-from nolij.auth.models import user_datastore
+from nolij.auth.models import user_datastore, User
 from nolij.company.models import Company
 from nolij.database import db
+from flask_security.forms import LoginForm
+from flask_security.views import login_user
+
+import bcrypt
 
 ROOT = Blueprint('root', __name__)
 
@@ -31,3 +35,27 @@ def signup():
         else:
             flash('Company already exists with that domain')
             return render_template("root/signup.html")
+
+
+@ROOT.route('login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    current_app.logger.info(form.data)
+    if form.validate_on_submit():
+        current_app.logger.info('VALIDATING')
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            if bcrypt.hashpw(form.password.data, user.password) == user.password:
+                user.authenticated = True
+                db.session.add(user)
+                db.session.commit()
+                login_user(user, remember=True)
+                return redirect(url_for("root.index"))
+            else:
+                flash('Incorrect username or password')
+                return render_template("security/login.html", form=form)
+        else:
+            flash('Incorrect username or password')
+            return render_template("security/login.html", form=form)
+
+    return render_template("security/login.html", form=form)
