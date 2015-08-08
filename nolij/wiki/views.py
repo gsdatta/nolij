@@ -40,7 +40,6 @@ def add_team():
 
         return redirect(url_for('wiki.dashboard'))
 
-
 @WIKI.route('/<team_slug>', methods=['GET', 'POST'])
 @login_required
 def team_details(team_slug):

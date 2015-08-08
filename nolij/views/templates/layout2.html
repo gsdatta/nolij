@@ -8,8 +8,8 @@
         <title>{no-lij}</title>
 
         <!-- Bootstrap -->
-        <!--<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" >-->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}" >
+        <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">-->
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -36,11 +36,11 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{{ url_for('root.index') }}">Home</a></li>
                             {% if current_user.is_authenticated() %}
                             <li><a href="{{ url_for('wiki.dashboard') }}">Dashboard</a></li>
                             <li><a href="{{ url_for('root.logout') }}">Logout</a></li>
                             {% else %}
+                            <li><a href="{{ url_for('root.index') }}">Home</a></li>
                             <li><a href="{{ url_for('root.company_signup') }}">Company Signup</a></li>
                             <li><a href="{{ url_for('root.user_signup') }}">User Signup</a></li>
                             <li><a href="{{ url_for('root.login') }}">Login</a></li>

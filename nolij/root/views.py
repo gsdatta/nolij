@@ -15,7 +15,10 @@ ROOT = Blueprint('root', __name__)
 
 @ROOT.route('/')
 def index():
-    return render_template("root/index.html")
+    if current_user.is_authenticated():
+        return redirect(url_for("wiki.dashboard"))
+    else:
+        return render_template("root/index.html")
 
 
 @ROOT.route('company_signup', methods=['GET', 'POST'])
@@ -68,7 +71,7 @@ def login():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user, remember=form.remember.data)
-                return redirect(url_for("root.index"))
+                return redirect(url_for("wiki.dashboard"))
             else:
                 flash('Incorrect username or password')
                 return render_template("security/login.html", form=form)
