@@ -16,7 +16,7 @@ ROOT = Blueprint('root', __name__)
 @ROOT.route('/')
 def index():
     if current_user.is_authenticated():
-        return redirect(url_for("wiki.dashboard"))
+        return redirect(url_for("folio.dashboard"))
     else:
         return render_template("root/index.html")
 
@@ -71,7 +71,7 @@ def login():
                 db.session.add(user)
                 db.session.commit()
                 login_user(user, remember=form.remember.data)
-                return redirect(url_for("wiki.dashboard"))
+                return redirect(url_for("folio.dashboard"))
             else:
                 flash('Incorrect username or password')
                 return render_template("security/login.html", form=form)
