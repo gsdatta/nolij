@@ -31,6 +31,7 @@ class User(db.Model, UserMixin):
 
     # Initialize user metadata
     email = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(255))
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
@@ -42,10 +43,8 @@ class User(db.Model, UserMixin):
 
     def as_dict(self):
         return {
-                "id": self.id,
-                "email": self.email,
-                "courses": [course.as_dict() for course in self.courses],
-                "university": self.university.as_dict()
+                'email': self.email,
+                'name': self.name
                 }
 
 

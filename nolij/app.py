@@ -15,23 +15,28 @@ def create_app(name, env):
         'dev': 'nolij.config.DevelopmentConfig',
         }
 
-    app = Flask(name)
+    app = Flask(name, static_folder='views/static', template_folder='views/templates')
     app.config.from_object(env_configs[env])
+
 
     import logging.config
     if app.config.get('LOGGING'):
         logging.config.dictConfig(app.config['LOGGING'])
+
+    from nolij.root.views import ROOT
+    app.register_blueprint(ROOT, url_prefix='/')
+
+    from nolij.auth.models import User, user_datastore
+    from nolij.company.models import Company
+    from nolij.wiki.models import Team, Wiki, Page
 
     # Initialize tables and database session
     db.init_app(app)
     with app.app_context():
         db.create_all()
 
-    security = Security(app, user_datastore)
+    from nolij.auth.forms import ExtendedRegisterForm
+    security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
 
     # Register Blueprints
-    from api.auth.controllers import AUTH
-    from api.studygroup.controllers import STUDY_GROUP
-    # app.register_blueprint(AUTH, url_prefix='/api/auth')
-    # app.register_blueprint(STUDY_GROUP, url_prefix='/api/studygroup')
     return app

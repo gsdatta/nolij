@@ -5,7 +5,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "postgres://localhost/studygroups"
+    SQLALCHEMY_DATABASE_URI = "postgres://localhost/nolij"
     PORT = 5000
     LOGGING = {
         'version': 1,
