@@ -7,15 +7,15 @@ from nolij.folio.decorators import team_access
 from flask_login import current_user, login_required
 
 
-WIKI = Blueprint('folio', __name__)
+FOLIO = Blueprint('folio', __name__)
 
-@WIKI.route('/dashboard', methods=['GET'])
+@FOLIO.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
     teams = Team.query.filter_by(company_id=current_user.company_id).all()
     return render_template("folio/dashboard.html", teams=teams)
 
-@WIKI.route('/add_team', methods=['GET', 'POST'])
+@FOLIO.route('/add_team', methods=['GET', 'POST'])
 @login_required
 def add_team():
     if request.method == 'POST':
@@ -41,7 +41,7 @@ def add_team():
 
         return redirect(url_for('folio.dashboard'))
 
-@WIKI.route('/<team_slug>', methods=['GET', 'POST', 'PUT'])
+@FOLIO.route('/<team_slug>', methods=['GET', 'POST', 'PUT'])
 @login_required
 @team_access
 def team_details(team_slug):
@@ -80,7 +80,7 @@ def team_details(team_slug):
 
 
 
-@WIKI.route('/<team_slug>/<folio_slug>', methods=['GET', 'POST'])
+@FOLIO.route('/<team_slug>/<folio_slug>', methods=['GET', 'POST'])
 @login_required
 def folio_details(team_slug, folio_slug):
     if request.method == 'GET':
