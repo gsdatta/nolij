@@ -1,3 +1,6 @@
-# Empty requirements.txt
-
-
+flask
+flask-security
+flask-sqlalchemy
+pylint
+gunicorn
+gevent
