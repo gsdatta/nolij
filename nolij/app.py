@@ -24,7 +24,10 @@ def create_app(name, env):
         logging.config.dictConfig(app.config['LOGGING'])
 
     from nolij.root.views import ROOT
+    from nolij.wiki.views import WIKI
+
     app.register_blueprint(ROOT, url_prefix='/')
+    app.register_blueprint(WIKI, url_prefix='/wiki')
 
     from nolij.auth.models import User, user_datastore
     from nolij.company.models import Company
