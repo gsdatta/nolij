@@ -47,6 +47,9 @@ class User(db.Model, UserMixin):
                 'name': self.name
                 }
 
+    def is_authenticated(self):
+        return self.is_authenticated
+
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)

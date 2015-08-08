@@ -6,7 +6,10 @@ class Config(object):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "postgres://localhost/nolij"
+    SECRET_KEY = 'woahimabadass'
     PORT = 5000
+    SECURITY_PASSWORD_HASH = 'bcrypt'
+    SECURITY_PASSWORD_SALT = SECRET_KEY
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
