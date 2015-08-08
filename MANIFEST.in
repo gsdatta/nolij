@@ -1,0 +1,19 @@
+graft docs
+graft examples
+graft src
+graft ci
+graft tests
+
+include .bumpversion.cfg
+include .prospector.yml
+include requirements.txt
+include test_requirements.txt
+
+include AUTHORS.md
+include CONTRIBUTING.md
+include LICENSE
+include README.md
+
+include tox.ini 
+
+global-exclude *.py[co] __pycache__ *.so *.pyd

@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description/>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.batch__task.BatchTaskProperty plugin="batch-task@1.17">
+      <tasks>
+        <hudson.plugins.batch__task.BatchTask>
+          <name>archive</name>
+          <script>/srv/tasks/build-archiver.run dist/nolij.pex</script>
+        </hudson.plugins.batch__task.BatchTask>
+      </tasks>
+    </hudson.plugins.batch__task.BatchTaskProperty>
+    <jenkins.plugins.slack.SlackNotifier_-SlackJobProperty plugin="slack@1.2">
+        <room>engineering</room>
+        <startNotification>true</startNotification>
+        <notifySuccess>true</notifySuccess>
+        <notifyAborted>true</notifyAborted>
+        <notifyNotBuilt>true</notifyNotBuilt>
+        <notifyUnstable>true</notifyUnstable>
+        <notifyFailure>true</notifyFailure>
+        <notifyBackToNormal>true</notifyBackToNormal>
+    </jenkins.plugins.slack.SlackNotifier_-SlackJobProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.0.1">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>git@github.com:%(repository)s</url>
+        <credentialsId>%(jenkins.ssh.id)s</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>%(branch.spec)s</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <browser class="hudson.plugins.git.browser.GithubWeb">
+      <url>https://github.com/%(repository)s/</url>
+    </browser>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <jenkins.plugins.shiningpanda.builders.PythonBuilder plugin="shiningpanda@0.20">
+      <pythonName>System-CPython-2.7</pythonName>
+      <nature>python</nature>
+      <command>import tox
+tox.cmdline()</command>
+      <ignoreExitCode>false</ignoreExitCode>
+    </jenkins.plugins.shiningpanda.builders.PythonBuilder>
+  </builders>
+  <publishers>
+    <hudson.plugins.batch__task.BatchTaskInvoker plugin="batch-task@1.17">
+      <configs>
+        <hudson.plugins.batch__task.BatchTaskInvoker_-Config>
+          <project>%(job.name)s</project>
+          <task>archive</task>
+        </hudson.plugins.batch__task.BatchTaskInvoker_-Config>
+      </configs>
+      <threshold>
+        <name>SUCCESS</name>
+        <completeBuild>true</completeBuild>
+      </threshold>
+    </hudson.plugins.batch__task.BatchTaskInvoker>
+    <jenkins.plugins.slack.SlackNotifier plugin="slack@1.2">
+      <teamDomain>urx</teamDomain>
+      <authToken>5RWlvPmjurhEGKnJb4lvGLUt</authToken>
+      <buildServerUrl>http://compute:7070/</buildServerUrl>
+      <room>#builds</room>
+    </jenkins.plugins.slack.SlackNotifier>
+  </publishers>
+  <buildWrappers>
+    <EnvInjectBuildWrapper plugin="envinject@1.89">
+      <info>
+        <propertiesContent>HOME=/tmp
+PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+TOXENV=jenkins-2.7
+              </propertiesContent>
+        <loadFilesFromMaster>false</loadFilesFromMaster>
+      </info>
+    </EnvInjectBuildWrapper>
+  </buildWrappers>
+</project>
