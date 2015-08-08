@@ -156,6 +156,7 @@ docs/_build/
 
 # PyBuilder
 target/
+<<<<<<< HEAD
 
 
 ### VirtualEnv ###
@@ -240,4 +241,3 @@ libs/
 es/
 hbase/
 spark/
-
