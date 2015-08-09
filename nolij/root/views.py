@@ -82,7 +82,7 @@ def login():
             flash('Incorrect username or password')
             return render_template("security/login.html", form=form)
 
-    return render_template("security/login.html", form=form)
+    return render_template("security/login.html", login_form=form)
 
 
 @ROOT.route('logout', methods=['POST'])

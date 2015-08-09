@@ -11,7 +11,7 @@ class UserRegistrationForm(Form):
     confirm  = PasswordField('Repeat Password')
 
     def validate_email(form, field):
-        user = User.query.filter_by(email=field.data)
+        user = User.query.filter_by(email=field.data).first()
         if user is not None:
             raise validators.ValidationError('A user with this email already exists.')
 

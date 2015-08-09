@@ -31,7 +31,6 @@ def add_team():
 
         if 'folios' in request.form and request.form['folios']:
             folios = request.form['folios'].split(',')
-            current_app.logger.info(folios)
             for folio in folios:
                 new_folio = Folio(name=folio, description='', team_id=new_team.id, slug=slugify(folio))
                 new_folio.administrators.append(current_user)
@@ -47,7 +46,6 @@ def add_team():
 def team_details(team_slug):
     if request.method == 'GET':
         folios = Folio.query.filter_by(team_id=request.team.id).all()
-        current_app.logger.info(request.team)
 
         return render_template("folio/team_details.html", folios=folios, team=request.team)
 
@@ -62,7 +60,6 @@ def team_details(team_slug):
                         continue
 
                     request.team.members.append(user)
-                    current_app.logger.info(request.team.members)
                     db.session.add(request.team)
 
                 db.session.commit()
@@ -121,7 +118,7 @@ def new_page(team_slug, folio_slug):
         db.session.add(new_page)
         db.session.commit()
 
-        return redirect(url_for('folio.folio_details', team_slug=request.team, folio_slug=request.folio))
+        return redirect(url_for('folio.folio_details', team_slug=request.team.slug, folio_slug=request.folio.slug))
 
 @FOLIO.route('/<team_slug>/<folio_slug>/<page_slug>', methods=['GET', 'POST'])
 @login_required

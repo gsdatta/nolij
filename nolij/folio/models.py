@@ -29,18 +29,21 @@ def slugify(value):
 class SlugMixin(object):
     slug = db.Column(db.String(), nullable=False)
 
-    def generate_slug(self):
+    def generate_slug(self, field):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = slugify(field)
         success = False
         i = 2
         while not success:
-            folio = Folio.query.filter_by(slug=self.slug).first()
-            if folio is None:
+            new_slug = self.slug + '-%s' % i
+            obj = self.query.filter_by(slug=new_slug).first()
+            if obj is None:
                 success = True
             else:
-                self.slug = self.slug + '-%s' % i
                 i = i + 1
+
+        self.slug = new_slug
+
 
 
 
@@ -62,12 +65,6 @@ class Team(db.Model):
     #main_folio = db.relationship("Folio")
 
     administrators = db.relationship("User", secondary=team_administrators)
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        db.session.add(self)
-        db.session.commit()
 
 
 class Folio(SlugMixin, db.Model):
@@ -95,7 +92,7 @@ class Page(SlugMixin, db.Model):
     folio = db.relationship("Folio", backref=db.backref("pages"))
 
 
-    name = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String(), nullable=False, unique=True)
     text = db.Column(db.Text(), nullable=True)
 
     contributors = db.relationship("User", secondary=page_contribs)
@@ -107,8 +104,8 @@ class Page(SlugMixin, db.Model):
 
 @listens_for(Folio, 'before_insert')
 def folio_slug(mapper, connect, target):
-    target.generate_slug()
+    target.generate_slug(target.name)
 
 @listens_for(Page, 'before_insert')
 def page_slug(mapper, connect, target):
-    target.generate_slug()
+    target.generate_slug(target.name)
