@@ -7,13 +7,14 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Pages</div>
                     <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked">
                         {% if folio.pages %}
-                            <ul class="nav nav-pills nav-stacked">
                             {% for page in folio.pages %}
                             <li><a href="{{ url_for('folio.page_details', team_slug=team.slug, folio_slug=folio.slug, page_slug=page.slug) }}">{{ page.name }}</a></li>
                             {% endfor %}
                         {% endif %}
                         <li><a href="{{ url_for('folio.new_page', team_slug=team.slug, folio_slug=folio.slug) }}"><span class="glyphicon glyphicon-plus"></span> Add a page</a> </li>
+                        </ul>
                     </div>
                 </div>
             </div>

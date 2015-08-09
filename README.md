@@ -1,4 +1,4 @@
-# nolij 
+# nolij
 
 <PROJECT DESCRIPTION>
 
@@ -9,12 +9,14 @@
 
 
 ## Install for development
-
+The dependencies are `postgres` and `virtualenv`.
 ```bash
-$ tox -e dev
-$ source env/bin/activate
-$ pip install --editable .
+$ virtualenv env
+$ pip install -r requirements.txt
 ```
+
+Create a database in your postgres install called `nolij`. If there is a user, update as such in
+`config.py` - for example, the url would become `postgres://user:password@localhost:5432/nolij`.
 
 
 ## Contributing
