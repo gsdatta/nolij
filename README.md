@@ -12,6 +12,7 @@
 The dependencies are `postgres` and `virtualenv`.
 ```bash
 $ virtualenv env
+$ source env/bin/activate
 $ pip install -r requirements.txt
 ```
 
