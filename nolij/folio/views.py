@@ -3,7 +3,7 @@ from nolij.database import db
 from nolij.auth.models import user_datastore, User
 from nolij.company.models import Company
 from nolij.folio.models import Team, Folio, Page, slugify
-from nolij.folio.decorators import team_access
+from nolij.folio.decorators import team_access, folio_access, page_access
 from flask_login import current_user, login_required
 
 
@@ -80,17 +80,54 @@ def team_details(team_slug):
 
 
 
+
 @FOLIO.route('/<team_slug>/<folio_slug>', methods=['GET', 'POST'])
 @login_required
+@team_access
+@folio_access
 def folio_details(team_slug, folio_slug):
     if request.method == 'GET':
-        team = Team.query.filter_by(slug=team_slug).first()
-        folio = Folio.query.filter_by(slug=folio_slug).first()
+        team = request.team
+        folio = request.folio
 
         if team is None or folio is None:
             flash('That team or folio does not exist. Please create it')
             return redirect(url_for('folio.dashboard'))
 
-        return render_template("folio/folio_details.html", folio=folio, team=team)
+        page = Page.query.filter_by(folio_id=folio.id, main_page=True).first()
+        return render_template("folio/page_details.html", folio=folio, team=team, page=page)
 
 
+@FOLIO.route('/<team_slug>/<folio_slug>/new', methods=['GET', 'POST'])
+@login_required
+@team_access
+@folio_access
+def new_page(team_slug, folio_slug):
+    if request.method == 'GET':
+        return render_template('folio/new_page.html', folio=request.folio, team=request.team)
+
+    if request.method == 'POST':
+        if 'title' not in request.form or 'content' not in request.form or request.form['title'] == '':
+            # TODO: Send text back if only the title is fucked up so they don't lose their work
+            flash('Missing a title or content')
+            return render_template('folio/new_page.html', folio=request.folio, team=request.team)
+
+        title = request.form['title']
+        main_page = (title == 'Overview')
+        new_page = Page(folio_id=request.folio.id, name=title, text=request.form['content'], main_page=main_page)
+
+        new_page.contributors.append(current_user)
+
+        db.session.add(new_page)
+        db.session.commit()
+
+        return redirect(url_for('folio.folio_details', team_slug=request.team, folio_slug=request.folio))
+
+@FOLIO.route('/<team_slug>/<folio_slug>/<page_slug>', methods=['GET', 'POST'])
+@login_required
+@team_access
+@folio_access
+@page_access
+def page_details(team_slug, folio_slug, page_slug):
+    if request.method == 'GET':
+        return render_template("folio/page_details.html", folio=request.folio, team=request.team, page=request.page)

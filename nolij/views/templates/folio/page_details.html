@@ -1,0 +1,10 @@
+{% extends "folio/folio_details.html" %}
+{% block page %}
+    {% if page %}
+    <div>
+        {{ page.text|markdown }}
+    </div>
+    {% else %}
+    <p>If you had an "Overview" page, it'd show up here!</p>
+    {% endif %}
+{% endblock %}

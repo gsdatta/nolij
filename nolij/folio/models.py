@@ -26,6 +26,24 @@ def slugify(value):
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     return re.sub('[-\s]+', '-', value)
 
+class SlugMixin(object):
+    slug = db.Column(db.String(), nullable=False)
+
+    def generate_slug(self):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        success = False
+        i = 2
+        while not success:
+            folio = Folio.query.filter_by(slug=self.slug).first()
+            if folio is None:
+                success = True
+            else:
+                self.slug = self.slug + '-%s' % i
+                i = i + 1
+
+
+
 
 class Team(db.Model):
     """
@@ -52,7 +70,7 @@ class Team(db.Model):
         db.session.commit()
 
 
-class Folio(db.Model):
+class Folio(SlugMixin, db.Model):
     """
     A folio contains the actual nolij within a team. A folio can have projects or
     pages tied to it.
@@ -68,22 +86,9 @@ class Folio(db.Model):
 
     administrators = db.relationship("User", secondary=folio_administrators)
 
-    main_folio = db.Column(db.Boolean(), default=False, nullable=False)
 
-    def generate_slug(self):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        success = False
-        i = 2
-        while not success:
-            folio = Folio.query.filter_by(slug=self.slug).first()
-            if folio is None:
-                success = True
-            else:
-                self.slug = self.slug + '-%s' % i
-                i = i + 1
 
-class Page(db.Model):
+class Page(SlugMixin, db.Model):
     id = db.Column(db.Integer(), primary_key=True)
 
     folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=False)
@@ -96,9 +101,14 @@ class Page(db.Model):
     contributors = db.relationship("User", secondary=page_contribs)
 
     date_created = db.Column(db.DateTime(), default=func.now(), nullable=False)
-    date_modified = db.Column(db.DateTime(), onupdate=datetime.datetime.now, nullable=False)
+    date_modified = db.Column(db.DateTime(), onupdate=func.now(), nullable=False, default=func.now())
 
+    main_page = db.Column(db.Boolean(), default=False, nullable=False)
 
 @listens_for(Folio, 'before_insert')
 def folio_slug(mapper, connect, target):
+    target.generate_slug()
+
+@listens_for(Page, 'before_insert')
+def page_slug(mapper, connect, target):
     target.generate_slug()
