@@ -19,6 +19,8 @@ $ pip install -r requirements.txt
 Create a database in your postgres install called `nolij`. If there is a user, update as such in
 `config.py` - for example, the url would become `postgres://user:password@localhost:5432/nolij`.
 
+To run the server, from the root directory of this project, execute `python -m nolij dev`.
+
 
 ## Contributing
 Anyone can help make this project better - read [CONTRIBUTING](CONTRIBUTING.md) to get started!
