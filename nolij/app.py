@@ -39,8 +39,7 @@ def create_app(name, env):
     with app.app_context():
         db.create_all()
 
-    from nolij.auth.forms import ExtendedRegisterForm
-    security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+    security = Security(app, user_datastore)
 
     Markdown(app)
 

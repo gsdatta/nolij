@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, current_app, jsonify, flash, redirect, url_for
-from nolij.auth.forms import ExtendedRegisterForm
+from nolij.company.forms import CompanyForm
 from nolij.auth.models import user_datastore, User
+from nolij.auth.forms import UserRegistrationForm
 from nolij.company.models import Company
 from nolij.database import db
 from flask_security.forms import LoginForm
@@ -23,47 +24,51 @@ def index():
 
 @ROOT.route('company_signup', methods=['GET', 'POST'])
 def company_signup():
-    if request.method == 'GET':
-        return render_template("root/signup.html")
-
-    if request.method == 'POST':
-        comp = Company.query.filter_by(domain=request.form['company_domain']).first()
-        if comp is None:
-            comp = Company(name=request.form['company_name'], domain=request.form['company_domain'])
-            db.session.add(comp)
-            db.session.commit()
-
+    form = CompanyForm()
+    if form.validate_on_submit():
+        comp = Company(name=form.name.data, domain=form.domain.data)
+        db.session.add(comp)
+        db.session.commit()
+        flash('Awesome, you have a company created!')
         return redirect(url_for('root.user_signup'))
+
+    return render_template("root/signup.html", company_form=form)
 
 
 @ROOT.route('user_signup', methods=['GET', 'POST'])
 def user_signup():
-    if request.method == 'GET':
-        return render_template('root/user_signup.html')
-
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        name = request.form['user_name']
+    form = UserRegistrationForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        name = form.name.data
+        password = form.password.data
         domain = email.split('@')[1]
 
+        # Get the company corresponding to this domain.
         comp = Company.query.filter_by(domain=domain).first()
+
+        # If the company doesn't exist, send them to company signup
         if comp is None:
             flash("Company doesn't exist, please create one first")
             return redirect(url_for('root.company_signup'))
 
+        # Otherwise, try to create the user
         user = user_datastore.create_user(email=email, password=password, name=name, company_id=comp.id)
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('root.login'))
+
+    return render_template('root/user_signup.html', signup_form=form)
 
 
 @ROOT.route('login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        # Try to get a user to get with email being signed in with
         user = User.query.filter_by(email=form.email.data).first()
         if user:
+            # If the user exists, check their password and authenticate them
             if verify_password(form.password.data.encode('utf-8'), user.password):
                 user.authenticated = True
                 db.session.add(user)
