@@ -53,8 +53,6 @@ def user_signup():
             return redirect(url_for('root.company_signup'))
 
         user = user_datastore.create_user(email=email, password=password, name=name, company_id=comp.id)
-        #if User.query.filter_by(company_id=comp.id).count() == 0:
-            #user.administrator = True
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('root.login'))

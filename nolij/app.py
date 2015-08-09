@@ -1,6 +1,7 @@
 from flask import Flask, g, request
 from flask_security import Security
 from nolij.database import db
+from flask.ext.markdown import Markdown
 
 def create_app(name, env):
     """
@@ -40,6 +41,8 @@ def create_app(name, env):
 
     from nolij.auth.forms import ExtendedRegisterForm
     security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+
+    Markdown(app)
 
     # Register Blueprints
     return app

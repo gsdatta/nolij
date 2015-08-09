@@ -1,28 +1,26 @@
 {% extends "layout2.html" %}
 {% block body %}
 <div class="container">
-    {% if folio.pages %}
     <div class="row">
-        {% for page in folio.pages %}
-        <div class="col-sm-4"> 
-            <h1>{{ folio.name }}</h1>
-            <p>{{ page.name }}</p>
+        <div class="col-sm-3">
+            <div class="well">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Pages</div>
+                    <div class="panel-body">
+                        {% if folio.pages %}
+                            <ul class="nav nav-pills nav-stacked">
+                            {% for page in folio.pages %}
+                            <li><a href="{{ url_for('folio.page_details', team_slug=team.slug, folio_slug=folio.slug, page_slug=page.slug) }}">{{ page.name }}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                        <li><a href="{{ url_for('folio.new_page', team_slug=team.slug, folio_slug=folio.slug) }}"><span class="glyphicon glyphicon-plus"></span> Add a page</a> </li>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endfor %}
+        <div class="col-sm-9">
+            {% block page %}{% endblock %}
+        </div>
     </div>
-    {% else %}
-        <p>You don't have any pages, create one now!</p>
-    {% endif %}
-    <form action="{{ url_for('folio.team_details', team_slug=team.slug) }}" method="POST">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" name="name" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <input type="text" name="description" class="form-control">
-        </div>
-        <input type="submit" class="form-control">
-    </form>
 </div>
 {% endblock %}
