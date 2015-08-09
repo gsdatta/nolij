@@ -6,3 +6,4 @@ gunicorn
 gevent
 psycopg2
 bcrypt
+flask-markdown
