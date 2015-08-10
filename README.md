@@ -7,6 +7,15 @@
 
 * TODO
 
+## Project Agenda: 
+
+View the following google docs to understand project status and updates as they are being implemented. 
+
+Once {nol-ij} stands at a level where it can support our documentation, it will be moved there. 
+
+
+https://docs.google.com/document/d/19G0_CfLpAAa_jSBKRaoj1lL2kn6vnpZE0iQV3zjQoc8/edit#
+
 
 ## Install for development
 The dependencies are `postgres` and `virtualenv`.
