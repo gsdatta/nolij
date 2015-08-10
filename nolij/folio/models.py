@@ -108,7 +108,6 @@ class Page(SlugMixin, db.Model):
 @listens_for(Folio, 'before_insert')
 def folio_slug(mapper, connect, target):
     target.generate_slug()
-
 @listens_for(Page, 'before_insert')
 def page_slug(mapper, connect, target):
     target.generate_slug()
