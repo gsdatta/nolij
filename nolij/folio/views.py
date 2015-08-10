@@ -33,7 +33,7 @@ def add_team():
 
         return redirect(url_for('folio.dashboard'))
 
-    return render_template('folio/new_team.html', new_team_form=form)
+    return render_template('team/new_team.html', new_team_form=form)
 
 @FOLIO.route('/<team_slug>', methods=['GET', 'POST', 'PUT'])
 @login_required
@@ -42,7 +42,7 @@ def team_details(team_slug):
     if request.method == 'GET':
         folios = Folio.query.filter_by(team_id=request.team.id).all()
 
-        return render_template("folio/team_details.html", folios=folios, team=request.team)
+        return render_template("team/team_details.html", folios=folios, team=request.team)
 
     if request.method == 'POST':
         if 'add_user' in request.form:
@@ -84,7 +84,7 @@ def folio_details(team_slug, folio_slug):
             return redirect(url_for('folio.dashboard'))
 
         page = Page.query.filter_by(folio_id=folio.id, main_page=True).first()
-        return render_template("folio/page_details.html", folio=folio, team=team, page=page)
+        return render_template("page/page_details.html", folio=folio, team=team, page=page)
 
 
 @FOLIO.route('/<team_slug>/<folio_slug>/new', methods=['GET', 'POST'])
@@ -92,13 +92,13 @@ def folio_details(team_slug, folio_slug):
 @folio_access_control(layers=['team', 'folio'])
 def new_page(team_slug, folio_slug):
     if request.method == 'GET':
-        return render_template('folio/new_page.html', folio=request.folio, team=request.team)
+        return render_template('page/new_page.html', folio=request.folio, team=request.team)
 
     if request.method == 'POST':
         if 'title' not in request.form or 'content' not in request.form or request.form['title'] == '':
             # TODO: Send text back if only the title is fucked up so they don't lose their work
             flash('Missing a title or content')
-            return render_template('folio/new_page.html', folio=request.folio, team=request.team)
+            return render_template('page/new_page.html', folio=request.folio, team=request.team)
 
         title = request.form['title']
         main_page = (title == 'Overview')
@@ -117,7 +117,7 @@ def new_page(team_slug, folio_slug):
 @folio_access_control(layers=['team', 'folio', 'page'])
 def page_details(team_slug, folio_slug, page_slug):
     if request.method == 'GET':
-        return render_template("folio/page_details.html", folio=request.folio, team=request.team, page=request.page)
+        return render_template("page/page_details.html", folio=request.folio, team=request.team, page=request.page)
 
 
 @FOLIO.route('/<team_slug>/settings', methods=['GET'])
@@ -127,4 +127,4 @@ def team_settings(team_slug):
     form = TeamForm()
     form.name.data = request.team.name
     form.private.data = request.team.private
-    return render_template('folio/new_team.html', team=request.team, new_team_form=form)
+    return render_template('team/new_team.html', team=request.team, new_team_form=form)

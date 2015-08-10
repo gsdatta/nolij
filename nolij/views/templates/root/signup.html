@@ -1,10 +1,16 @@
-{% extends "layout2.html" %}
+{% extends "layout.html" %}
 {% from 'macros.html' import render_form %}
 {% block body %}
 <div class="container">
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
-            {{ render_form(company_form, action_url=url_for('root.company_signup'), action_text='Submit Form') }}
+			<div class="well">
+				Signup for a company account here. Members of your organization can signup with an email of the same domain,
+				and will automatically gain access to your company account.
+			</div>
+            {{ render_form(company_form, action_url=url_for('root.company_signup'), action_text='Signup') }}
+			<br>
+			<p>Already have a company? <a href="{{ url_for('root.user_signup') }}">Create an account.</a></p>
         </div>
     </div>
 </div>

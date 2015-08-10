@@ -1,9 +1,10 @@
-{% extends "layout2.html" %}
+{% extends "layout.html" %}
 {% block body %}
 <div class="container">
     <div class="jumbotron">
         <h1>{nol-ij}</h1>
-        <p>Bringing knowledge to the masses</p>
+        <p>Making internal knowledge sharing simple.</p>
+		<a class="btn btn-success" href="{{ url_for('root.company_signup') }}">Get started</a>
     </div>
     <div class="row">
         <div class="col-sm-4">
