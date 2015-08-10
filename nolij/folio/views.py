@@ -3,7 +3,8 @@ from nolij.database import db
 from nolij.auth.models import user_datastore, User
 from nolij.company.models import Company
 from nolij.folio.models import Team, Folio, Page, slugify
-from nolij.folio.decorators import team_access, folio_access, page_access
+from nolij.folio.decorators import folio_access_control
+from nolij.folio.forms import TeamForm
 from flask_login import current_user, login_required
 
 
@@ -18,31 +19,25 @@ def dashboard():
 @FOLIO.route('/add_team', methods=['GET', 'POST'])
 @login_required
 def add_team():
-    if request.method == 'POST':
-        name = request.form['name']
+    form = TeamForm()
+    if form.validate_on_submit():
+        new_team = Team(name=form.name.data, company_id=current_user.company_id, private=form.private.data)
 
-        new_team = Team(name=name, company_id=current_user.company_id, slug=slugify(name))
-
+        # Update members and admins
         new_team.members.append(current_user)
         new_team.administrators.append(current_user)
 
+        # Save the new team
         db.session.add(new_team)
         db.session.commit()
 
-        if 'folios' in request.form and request.form['folios']:
-            folios = request.form['folios'].split(',')
-            for folio in folios:
-                new_folio = Folio(name=folio, description='', team_id=new_team.id, slug=slugify(folio))
-                new_folio.administrators.append(current_user)
-
-                db.session.add(new_folio)
-            db.session.commit()
-
         return redirect(url_for('folio.dashboard'))
+
+    return render_template('folio/new_team.html', new_team_form=form)
 
 @FOLIO.route('/<team_slug>', methods=['GET', 'POST', 'PUT'])
 @login_required
-@team_access
+@folio_access_control(layers=['team'])
 def team_details(team_slug):
     if request.method == 'GET':
         folios = Folio.query.filter_by(team_id=request.team.id).all()
@@ -76,12 +71,9 @@ def team_details(team_slug):
         return redirect(url_for('folio.team_details', team_slug=request.team.slug))
 
 
-
-
 @FOLIO.route('/<team_slug>/<folio_slug>', methods=['GET', 'POST'])
 @login_required
-@team_access
-@folio_access
+@folio_access_control(layers=['team', 'folio'])
 def folio_details(team_slug, folio_slug):
     if request.method == 'GET':
         team = request.team
@@ -97,8 +89,7 @@ def folio_details(team_slug, folio_slug):
 
 @FOLIO.route('/<team_slug>/<folio_slug>/new', methods=['GET', 'POST'])
 @login_required
-@team_access
-@folio_access
+@folio_access_control(layers=['team', 'folio'])
 def new_page(team_slug, folio_slug):
     if request.method == 'GET':
         return render_template('folio/new_page.html', folio=request.folio, team=request.team)
@@ -120,11 +111,20 @@ def new_page(team_slug, folio_slug):
 
         return redirect(url_for('folio.folio_details', team_slug=request.team.slug, folio_slug=request.folio.slug))
 
+
 @FOLIO.route('/<team_slug>/<folio_slug>/<page_slug>', methods=['GET', 'POST'])
 @login_required
-@team_access
-@folio_access
-@page_access
+@folio_access_control(layers=['team', 'folio', 'page'])
 def page_details(team_slug, folio_slug, page_slug):
     if request.method == 'GET':
         return render_template("folio/page_details.html", folio=request.folio, team=request.team, page=request.page)
+
+
+@FOLIO.route('/<team_slug>/settings', methods=['GET'])
+@login_required
+@folio_access_control(layers=['team'])
+def team_settings(team_slug):
+    form = TeamForm()
+    form.name.data = request.team.name
+    form.private.data = request.team.private
+    return render_template('folio/new_team.html', team=request.team, new_team_form=form)

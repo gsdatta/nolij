@@ -7,7 +7,7 @@
                 <h1>Welcome, {{ current_user.name }}</h1>
                 <p>Select a team at the right to begin.<p>
                 <p>There are currently {{ teams|length }} teams at {{ current_user.company.name }}</p>
-                <p>You can also create a team below:</p>
+                <p>You can also <a href="{{url_for('folio.add_team')}}">create a team</a> below:</p>
                 <form action="{{ url_for('folio.add_team') }}" method="POST">
                     <div class="form-group">
                         <label for="name">Name</label>

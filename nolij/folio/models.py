@@ -5,37 +5,68 @@ import unicodedata
 import re
 from sqlalchemy.event import listens_for
 
+
+# Association table for team<->users (members)
 team_members = db.Table('team_members',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-        db.Column('studygroup_id', db.Integer(), db.ForeignKey('team.id')))
+        db.Column('team_id', db.Integer(), db.ForeignKey('team.id')))
 
+# Association table for folio<->users (admins)
 folio_administrators = db.Table('folio_adminstrators' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('folio_id', db.Integer(), db.ForeignKey('folio.id')))
 
+# Association table for team<->users (admins)
 team_administrators = db.Table('team_administrators' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('team_id', db.Integer(), db.ForeignKey('team.id')))
 
+# Association table for page<->users (contributors)
 page_contribs = db.Table('page_contribs' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('page_id', db.Integer(), db.ForeignKey('page.id')))
 
 def slugify(value):
+    """
+    Returns a slug given a string.
+
+    :param value: The string to slugify
+    :return: A slug (String)
+    """
     value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     return re.sub('[-\s]+', '-', value)
 
 class SlugMixin(object):
+
+    """
+    This mixin can be added to any model to provide slug functionality.
+
+    However, a `before_install` event listener needs to be added
+    as seen at the bottom of this file.
+    """
+
     slug = db.Column(db.String(), nullable=False)
 
     def generate_slug(self, field):
+        """
+        Generates a slug for the object based on the given field.
+        If an object with that slug exists, then add a number to the
+        slug in the form slug-#, and increment the number until such
+        a slug is found.
+        """
         if not self.slug:
             self.slug = slugify(field)
-        success = False
+
+        # If this slug is unique, go ahead and skip the loop
+        success = self.query.filter_by(slug=self.slug).first() is None
+        new_slug = self.slug
+
+        # Loop continually until the correct slug has been found
         i = 2
         while not success:
             new_slug = self.slug + '-%s' % i
+            # TODO: USE COUNT
             obj = self.query.filter_by(slug=new_slug).first()
             if obj is None:
                 success = True
@@ -45,10 +76,7 @@ class SlugMixin(object):
         self.slug = new_slug
 
 
-
-
-
-class Team(db.Model):
+class Team(SlugMixin, db.Model):
     """
     A team provides the fundamental structure of a company. Each team is comprised of
     "teams". These teams can be anything generic such as 'Onboarding', or even
@@ -58,13 +86,12 @@ class Team(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
     members = db.relationship("User", secondary=team_members)
-    slug = db.Column(db.String(), nullable=False)
+    administrators = db.relationship("User", secondary=team_administrators)
+    private = db.Column(db.Boolean(), default=False, nullable=False)
+
+    # Company
     company_id = db.Column(db.Integer(), db.ForeignKey("company.id"))
     company = db.relationship("Company")
-    #main_folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=True)
-    #main_folio = db.relationship("Folio")
-
-    administrators = db.relationship("User", secondary=team_administrators)
 
 
 class Folio(SlugMixin, db.Model):
@@ -75,37 +102,44 @@ class Folio(SlugMixin, db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
-    team_id = db.Column(db.Integer(), db.ForeignKey("team.id"))
-    team = db.relationship("Team")
     slug = db.Column(db.String(), nullable=False)
-
     description = db.Column(db.String(), nullable=True)
-
     administrators = db.relationship("User", secondary=folio_administrators)
 
+    # Set up team relationship
+    team_id = db.Column(db.Integer(), db.ForeignKey("team.id"))
+    team = db.relationship("Team")
 
 
 class Page(SlugMixin, db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
+    """
+    A Page is the model that contains the actual content. The text field
+    is the field that contains the markdown text. It belongs to a folio.
+    """
 
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(), nullable=False, unique=True)  # Title
+    text = db.Column(db.Text(), nullable=True)  # Markdown Text
+    date_created = db.Column(db.DateTime(), default=func.now(), nullable=False)
+    date_modified = db.Column(db.DateTime(), onupdate=func.now(), nullable=False, default=func.now())
+    main_page = db.Column(db.Boolean(), default=False, nullable=False)
+    contributors = db.relationship("User", secondary=page_contribs)
+
+    # Set up folio relationship
     folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=False)
     folio = db.relationship("Folio", backref=db.backref("pages"))
 
 
-    name = db.Column(db.String(), nullable=False, unique=True)
-    text = db.Column(db.Text(), nullable=True)
 
-    contributors = db.relationship("User", secondary=page_contribs)
-
-    date_created = db.Column(db.DateTime(), default=func.now(), nullable=False)
-    date_modified = db.Column(db.DateTime(), onupdate=func.now(), nullable=False, default=func.now())
-
-    main_page = db.Column(db.Boolean(), default=False, nullable=False)
-
+# ****************************** Event Listeners for Slugs ******************************
 @listens_for(Folio, 'before_insert')
 def folio_slug(mapper, connect, target):
     target.generate_slug(target.name)
 
 @listens_for(Page, 'before_insert')
+def page_slug(mapper, connect, target):
+    target.generate_slug(target.name)
+
+@listens_for(Team, 'before_insert')
 def page_slug(mapper, connect, target):
     target.generate_slug(target.name)
