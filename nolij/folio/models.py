@@ -4,7 +4,9 @@ import datetime
 import unicodedata
 import re
 from sqlalchemy.event import listens_for
-
+from flask_sqlalchemy import BaseQuery
+from sqlalchemy_searchable import SearchQueryMixin
+from sqlalchemy_utils.types import TSVectorType
 
 # Association table for team<->users (members)
 team_members = db.Table('team_members',
@@ -111,15 +113,18 @@ class Folio(SlugMixin, db.Model):
     team = db.relationship("Team")
 
 
+class PageQuery(BaseQuery, SearchQueryMixin):
+    pass
+
+
 class Page(SlugMixin, db.Model):
     """
     A Page is the model that contains the actual content. The text field
     is the field that contains the markdown text. It belongs to a folio.
     """
-
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(), nullable=False, unique=True)  # Title
-    text = db.Column(db.Text(), nullable=True)  # Markdown Text
+    name = db.Column(db.Unicode(255), nullable=False, unique=True)  # Title
+    text = db.Column(db.UnicodeText(), nullable=True)  # Markdown Text
     date_created = db.Column(db.DateTime(), default=func.now(), nullable=False)
     date_modified = db.Column(db.DateTime(), onupdate=func.now(), nullable=False, default=func.now())
     main_page = db.Column(db.Boolean(), default=False, nullable=False)
@@ -129,16 +134,22 @@ class Page(SlugMixin, db.Model):
     folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=False)
     folio = db.relationship("Folio", backref=db.backref("pages"))
 
+    # Set up Search
+    query_class = PageQuery
+    search_vector = db.Column(TSVectorType('name', 'text'))
 
 
 # ****************************** Event Listeners for Slugs ******************************
+
 @listens_for(Folio, 'before_insert')
 def folio_slug(mapper, connect, target):
     target.generate_slug(target.name)
 
+
 @listens_for(Page, 'before_insert')
 def page_slug(mapper, connect, target):
     target.generate_slug(target.name)
+
 
 @listens_for(Team, 'before_insert')
 def page_slug(mapper, connect, target):

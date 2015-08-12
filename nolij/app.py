@@ -2,6 +2,9 @@ from flask import Flask, g, request
 from flask_security import Security
 from nolij.database import db
 from flask.ext.markdown import Markdown
+from flask_login import current_user
+from nolij.folio.forms import SearchForm
+
 
 def create_app(name, env):
     """
@@ -34,10 +37,17 @@ def create_app(name, env):
     from nolij.company.models import Company
     from nolij.folio.models import Team, Folio, Page
 
+    @app.before_request
+    def add_form():
+        if current_user.is_authenticated():
+            request.search_form = SearchForm()
+
     # Initialize tables and database session
     db.init_app(app)
     with app.app_context():
         db.create_all()
+
+    db.configure_mappers()
 
     security = Security(app, user_datastore)
 

@@ -6,3 +6,5 @@ gunicorn
 gevent
 psycopg2
 bcrypt
+flask_script
+sqlalchemy-searchable

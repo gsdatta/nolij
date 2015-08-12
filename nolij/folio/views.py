@@ -10,16 +10,19 @@ from flask_login import current_user, login_required
 
 FOLIO = Blueprint('folio', __name__)
 
+
 @FOLIO.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
     teams = Team.query.filter_by(company_id=current_user.company_id).all()
     return render_template("folio/dashboard.html", teams=teams)
 
+
 @FOLIO.route('/add_team', methods=['GET', 'POST'])
 @login_required
 def add_team():
-    form = TeamForm()
+    form = TeamForm(private=True)
+    form.private.data = form.private.data or False
     if form.validate_on_submit():
         new_team = Team(name=form.name.data, company_id=current_user.company_id, private=form.private.data)
 
@@ -32,8 +35,10 @@ def add_team():
         db.session.commit()
 
         return redirect(url_for('folio.dashboard'))
-
+    else:
+        current_app.logger.info([field.errors for field in form])
     return render_template('team/new_team.html', new_team_form=form)
+
 
 @FOLIO.route('/<team_slug>', methods=['GET', 'POST', 'PUT'])
 @login_required
@@ -127,4 +132,24 @@ def team_settings(team_slug):
     form = TeamForm()
     form.name.data = request.team.name
     form.private.data = request.team.private
-    return render_template('team/new_team.html', team=request.team, new_team_form=form)
+    return render_template('team/settings.html', team=request.team, new_team_form=form)
+
+
+@FOLIO.route('/search', methods=['POST'])
+@login_required
+def search():
+    if request.search_form.validate_on_submit():
+        return redirect(url_for('folio.search_results', query=request.search_form.query.data))
+
+
+@FOLIO.route('/search/<query>', methods=['GET'])
+def search_results(query):
+    results = Page.query.search(query).all()
+    # results = (db.session.query(Page, Folio, Team)
+    #     .join(Team)
+    #     .join(Folio)
+    #     .filter()
+    #            )
+    # results = Page.query.filter(Page.folio.team.has(current_user in Team.members)).search(query).all()
+    current_app.logger.info(results)
+    return render_template('search/results.html', results=results)
