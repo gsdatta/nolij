@@ -9,4 +9,4 @@ class TeamForm(Form):
 
 
 class SearchForm(Form):
-    query = StringField('Search', validators=[validators.input_required()])
+    query = StringField('Search', validators=[validators.input_required()], description='Search')

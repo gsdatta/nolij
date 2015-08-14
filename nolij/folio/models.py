@@ -28,6 +28,15 @@ page_contribs = db.Table('page_contribs' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('page_id', db.Integer(), db.ForeignKey('page.id')))
 
+
+# class TeamMembers(db.Model):
+#     __tablename__ = 'team_members'
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+#     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), primary_key=True)
+#
+#     user = db.relationship("User")
+#     team = db.relationship("")
+
 def slugify(value):
     """
     Returns a slug given a string.
@@ -87,7 +96,7 @@ class Team(SlugMixin, db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
-    members = db.relationship("User", secondary=team_members)
+    members = db.relationship("User", secondary=team_members, backref="teams")
     administrators = db.relationship("User", secondary=team_administrators)
     private = db.Column(db.Boolean(), default=False, nullable=False)
 
@@ -137,6 +146,9 @@ class Page(SlugMixin, db.Model):
     # Set up Search
     query_class = PageQuery
     search_vector = db.Column(TSVectorType('name', 'text'))
+
+    def users_with_access(self):
+        return [member.id for member in self.folio.team.members]
 
 
 # ****************************** Event Listeners for Slugs ******************************

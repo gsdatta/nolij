@@ -6,6 +6,7 @@ from nolij.folio.models import Team, Folio, Page, slugify
 from nolij.folio.decorators import folio_access_control
 from nolij.folio.forms import TeamForm
 from flask_login import current_user, login_required
+from sqlalchemy_searchable import search as sql_search
 
 
 FOLIO = Blueprint('folio', __name__)
@@ -144,12 +145,5 @@ def search():
 
 @FOLIO.route('/search/<query>', methods=['GET'])
 def search_results(query):
-    results = Page.query.search(query).all()
-    # results = (db.session.query(Page, Folio, Team)
-    #     .join(Team)
-    #     .join(Folio)
-    #     .filter()
-    #            )
-    # results = Page.query.filter(Page.folio.team.has(current_user in Team.members)).search(query).all()
-    current_app.logger.info(results)
+    results = Page.query.search(query).join(Folio).join(Team).filter(Team.id.in_(current_user.team_ids())).all()
     return render_template('search/results.html', results=results)
