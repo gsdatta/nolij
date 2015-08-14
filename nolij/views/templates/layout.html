@@ -1,4 +1,4 @@
-{% from 'macros.html' import render_form, render_breadcrumbs %}
+{% from 'macros.html' import render_form, render_breadcrumbs, render_search_form %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -37,14 +37,12 @@
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-						{% if current_user.is_authenticated() %}
-						{% endif %}
 						<ul class="nav navbar-nav navbar-right">
-                            {% if current_user.is_authenticated() %}
+							{% if current_user.is_authenticated() %}
 							<li>
-								{{ render_form(form=request.search_form, action_url=url_for('folio.search'), class_='navbar-form navbar-right', submit_button=False) }}
+								{{ render_search_form(form=request.search_form, action_url=url_for('folio.search'), class_='navbar-form navbar-right') }}
 							</li>
-                            <li><a href="{{ url_for('folio.dashboard') }}">Dashboard</a></li>
+							<li><a href="{{ url_for('folio.dashboard') }}">Dashboard</a></li>
                             <li><a href="{{ url_for('root.logout') }}">Logout</a></li>
                             {% else %}
                             <li><a href="{{ url_for('root.index') }}">Home</a></li>
