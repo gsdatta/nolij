@@ -1,6 +1,9 @@
 {% extends "folio/folio_details.html" %}
 {% block page %}
     {% if page %}
+	<div class="page-header" style="margin-top:0px;border-bottom: 1px solid #E4E4E4;">
+        <h1 style="margin-top:0px">{{ page.name }} <small style="font-size:40%;"><i>Last modified {{ page.date_modified.strftime('%h %d, %Y at %H:%M') }}</i></small></h1>
+	</div>
     <div>
         {{ page.text|markdown }}
     </div>
