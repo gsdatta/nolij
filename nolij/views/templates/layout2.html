@@ -39,6 +39,7 @@
                         <ul class="nav navbar-nav navbar-right">
                             {% if current_user.is_authenticated() %}
                             <li><a href="{{ url_for('folio.dashboard') }}">Dashboard</a></li>
+                            <li><a href="{{ url_for('root.user_signup'}}"> Quick User Signup</a></li>
                             <li><a href="{{ url_for('root.logout') }}">Logout</a></li>
                             {% else %}
                             <li><a href="{{ url_for('root.index') }}">Home</a></li>

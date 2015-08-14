@@ -1,9 +1,13 @@
-from nolij.database import db
+from nolij.database importd db
 from sqlalchemy.sql import func
 import datetime
 import unicodedata
 import re
 from sqlalchemy.event import listens_for
+
+executive_board = db.table('executive_board',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('executive_permission', db.Integer(), db.ForeignKey('executive.id'))) 
 
 team_members = db.Table('team_members',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -22,7 +26,7 @@ page_contribs = db.Table('page_contribs' ,
         db.Column('page_id', db.Integer(), db.ForeignKey('page.id')))
 
 def slugify(value):
-    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')          ##Hash
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     return re.sub('[-\s]+', '-', value)
 
@@ -42,9 +46,6 @@ class SlugMixin(object):
                 self.slug = self.slug + '-%s' % i
                 i = i + 1
 
-
-
-
 class Team(db.Model):
     """
     A team provides the fundamental structure of a company. Each team is comprised of
@@ -58,6 +59,7 @@ class Team(db.Model):
     slug = db.Column(db.String(), nullable=False)
     company_id = db.Column(db.Integer(), db.ForeignKey("company.id"))
     company = db.relationship("Company")
+
     #main_folio_id = db.Column(db.Integer(), db.ForeignKey("folio.id"), nullable=True)
     #main_folio = db.relationship("Folio")
 
@@ -72,21 +74,20 @@ class Team(db.Model):
 
 class Folio(SlugMixin, db.Model):
     """
-    A folio contains the actual nolij within a team. A folio can have projects or
-    pages tied to it.
+    A folio contains the actual documentation within a team. A folio can have projects or
+    pages tied to it, all within the nolij service. 
     """
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
     team_id = db.Column(db.Integer(), db.ForeignKey("team.id"))
+    executive = db.Column(db.Boolean(),db.ForeignKey("executive_board"))
     team = db.relationship("Team")
     slug = db.Column(db.String(), nullable=False)
 
     description = db.Column(db.String(), nullable=True)
 
     administrators = db.relationship("User", secondary=folio_administrators)
-
-
 
 class Page(SlugMixin, db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -108,7 +109,6 @@ class Page(SlugMixin, db.Model):
 @listens_for(Folio, 'before_insert')
 def folio_slug(mapper, connect, target):
     target.generate_slug()
-
 @listens_for(Page, 'before_insert')
 def page_slug(mapper, connect, target):
     target.generate_slug()
