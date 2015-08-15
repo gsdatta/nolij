@@ -141,14 +141,20 @@ def page_details(team_slug, folio_slug, page_slug):
         return render_template("page/page_details.html", folio=request.folio, team=request.team, page=request.page)
 
 
-@FOLIO.route('/<team_slug>/settings', methods=['GET'])
+@FOLIO.route('/<team_slug>/settings', methods=['GET', 'POST'])
 @login_required
 @folio_access_control(layers=['team'])
 def team_settings(team_slug):
     form = TeamForm()
+    if form.validate_on_submit():
+        request.team.name = form.name.data
+        request.team.private = form.private.data
+        db.session.add(request.team)
+        db.session.commit()
+
     form.name.data = request.team.name
     form.private.data = request.team.private
-    return render_template('team/settings.html', team=request.team, new_team_form=form)
+    return render_template('team/team_settings.html', team=request.team, new_team_form=form)
 
 
 @FOLIO.route('/search', methods=['POST'])
