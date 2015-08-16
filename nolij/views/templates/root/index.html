@@ -1,22 +1,23 @@
-{% extends "layout2.html" %}
+{% extends "layout.html" %}
 {% block body %}
 <div class="container">
     <div class="jumbotron">
         <h1>{nol-ij}</h1>
-        <p>Bringing knowledge to the masses</p>
+        <p>Making internal knowledge sharing simple.</p>
+		<a class="btn btn-success" href="{{ url_for('root.company_signup') }}">Get started</a>
     </div>
     <div class="row">
         <div class="col-sm-4">
-            <h4>Easily accessible</h4>
-            <p>SOme bullshit here</p>
+            <h1>Easily accessible</h1>
+            <p>nol-ij makes information easily accessible to everybody within your organization. Create teams and share knowledge seamlessly.</p>
         </div>
         <div class="col-sm-4">
-            <h4>Easily accessible</h4>
-            <p>SOme bullshit here</p>
+            <h1>Secure</h1>
+            <p>Allow access to teams, folios, and pages on a per-user basis.</p>
         </div>
         <div class="col-sm-4">
-            <h4>Easily accessible</h4>
-            <p>SOme bullshit here</p>
+            <h1>Usability at the core</h1>
+            <p>Use Markdown to write beautiful, accessible documents. Preview your writeup on the fly.</p>
         </div>
     </div>
 </div>

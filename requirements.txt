@@ -6,4 +6,9 @@ gunicorn
 gevent
 psycopg2
 bcrypt
+<<<<<<< HEAD
 flask-markdown
+=======
+flask_script
+sqlalchemy-searchable
+>>>>>>> bc6f77ce17aabf4b5b42e166187a51b07f3e032e

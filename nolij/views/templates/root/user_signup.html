@@ -1,23 +1,10 @@
-{% extends "layout2.html" %}
+{% extends "layout.html" %}
+{% from 'macros.html' import render_form %}
 {% block body %}
 <div class="container">
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
-            <form action="{{ url_for('root.user_signup') }}" method="POST">
-                <div class="form-group">
-                    <label for="user_name">User Full Name</label>
-                    <input type="text" class="form-control" name="user_name">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" name="password">
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" name="email">
-                </div>
-                <input type="submit" class="form-control">
-            </form>
+            {{ render_form(signup_form, action_url=url_for('root.user_signup'), action_text='Signup') }}
         </div>
     </div>
 </div>
