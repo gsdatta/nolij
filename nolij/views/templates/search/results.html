@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+			{% if results %}
+			{% for page in results %}
+			<div class="well">
+				<b><a href="{{ url_for('folio.page_details', team_slug=page.folio.team.slug, folio_slug=page.folio.slug, page_slug=page.slug) }}" style="font-size: 2em;">{{ page.name }}</a></b>
+				<p>{{ page.text[:100]|markdown}}...</p>
+			</div>
+			{% endfor %}
+			{% else %}
+			<div class="well">
+				<p>Sorry, no results found!</p>
+			</div>
+			{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

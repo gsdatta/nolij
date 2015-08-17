@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% from 'macros.html' import render_form %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+            <h1>Create a team:</h1>
+            <div class="well">
+                <p>A team makes up the fundamental structure of your company {nol-ij}.</p>
+                <p>For example, "Engineering", or even "Onboarding" are a great start.</p>
+            </div>
+            {{ render_form(new_team_form, action_url=url_for('folio.add_team'), action_text='Create') }}
+        </div>
+    </div>
+</div>
+{% endblock %}
