@@ -1,8 +1,7 @@
-# 													{nol-ij}
+													#{nol-ij}
 
 <PROJECT DESCRIPTION>
 ## Mission Statement
-													{nol-ij}
 Secure and team centered information sharing made easy. 
 
 Security 	- Control user permissions to those who need it. 
