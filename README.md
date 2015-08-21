@@ -1,7 +1,16 @@
 # nolij
 
 <PROJECT DESCRIPTION>
+## Mission Statement
+					{nol-ij}
+Secure and team centered information sharing made easy. 
 
+Security 	- Control user permissions to those who need it. 
+	Authentication - Domain and invite based access to teams and folios. 
+	Shares information with relevent users. 
+
+Ease of Use - User interfacce is simple, and gets the job done. 
+	- User friendly, made with every possible user in mind! 
 
 ## Features
 
