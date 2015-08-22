@@ -11,6 +11,7 @@ manager = Manager(app)
 
 
 @manager.command
+
 def create_admin():
     """Creates the admin user."""
     comp = Company(name="nolij", domain="nolij.io")
@@ -20,7 +21,6 @@ def create_admin():
     user = user_datastore.create_user(email='admin@nolij.io', password='asdf', name='Admin', company_id=comp.id)
     db.session.add(user)
     db.session.commit()
-
 
 @manager.command
 def delete_db(new_admin=False):
