@@ -8,6 +8,5 @@ class TeamForm(Form):
     members = TextAreaField('Members', validators=[], description='Enter member emails here, separated by new lines.')
     private = BooleanField('Private', validators=[])
 
-
-class SearchForm(Form):
-    query = StringField(validators=[validators.input_required()], description='Search')
+class SearchForm(Form): 
+	query = StringField(validators =[validators.input_required()], description='Search')

@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, current_app, jsonify, fla
 from nolij.company.forms import CompanyForm
 from nolij.auth.models import user_datastore, User
 from nolij.auth.forms import UserRegistrationForm
+from nolij.auth.forms2 import CompanyRegistrationForm
 from nolij.company.models import Company
 from nolij.database import db
 from flask_security.forms import LoginForm
@@ -59,6 +60,16 @@ def user_signup():
         return redirect(url_for('root.login'))
 
     return render_template('root/user_signup.html', signup_form=form)
+
+@ROOT.route('corporate_signup', methods=['GET', 'POST'])
+def corporate_signup():
+    form = CompanyRegistrationForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        name = form.name.data
+        password = form.password.data
+        #### TO COMPLETE
+        return redirect(url_for('root.login'))
 
 
 @ROOT.route('login', methods=['GET', 'POST'])

@@ -5,12 +5,11 @@
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
 			<div class="well">
-				Signup for a company account here. Members of your organization can signup with an email of the same domain,
-				and will automatically gain access to your company account.
+				Signup for a company account here.
 			</div>
             {{ render_form(company_form, action_url=url_for('root.company_signup'), action_text='Signup') }}
 			<br>
-			<p>Already have a company? <a href="{{ url_for('root.user_signup') }}">Create an account.</a></p>
+			<p>Is your company already on {nol-ij}? <a href="{{ url_for('root.user_signup') }}">Create an account</a> with your company!</p>
         </div>
     </div>
 </div>
