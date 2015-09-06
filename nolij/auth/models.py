@@ -53,6 +53,20 @@ class User(db.Model, UserMixin):
 
     def is_authenticated(self):
         return self.is_authenticated
+class Manager(db.Model, RoleMixin, UserMixin): 
+    manager = db.Column(db.Boolean(), primary_key = False) 
+    name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    company_id = db.Column(db.Integer(), db.ForeignKey('company.id'))
+    company = db.relationship('Company')
+    def as_dict(self): 
+        return {
+                'email': self.email, 
+                'name': self.name,
+                'manager': self.manager
+                }
+    def is_authenticated(self): 
+        return self.is_authenticated
 
 
 # Setup Flask-Security
