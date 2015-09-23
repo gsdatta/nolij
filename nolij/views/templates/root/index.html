@@ -3,8 +3,12 @@
 <div class="container">
     <div class="jumbotron">
         <center>
-        <img src="{{ url_for('static', filename='assets/graphics/nolij.png') }}" alt="{nol-ij} logo" style="width:200px;height:75px;" > 
-        <p>Making internal knowledge sharing simple.</p>
+            <div class = "jumbotron"> 
+                <div class = "jumbotron"> 
+                    <img src="{{ url_for('static', filename='assets/graphics/nolij.png') }}" alt="{nol-ij} logo" style="width:200px;height:75px;" > 
+                </div>
+            <p>Making internal knowledge sharing simple.</p>
+            </div>
 		<a class="btn btn-success" href="{{ url_for('root.company_signup') }}">Get started</a>
         </center>
     </div>
