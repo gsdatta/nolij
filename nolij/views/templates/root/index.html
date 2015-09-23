@@ -2,24 +2,41 @@
 {% block body %}
 <div class="container">
     <div class="jumbotron">
-        <img src="nolij.png" alt="{nol-ij} logo" style="width:128px;height:128px;" > 
+        <center>
+        <img src="{{ url_for('static', filename='assets/graphics/nolij.png') }}" alt="{nol-ij} logo" style="width:200px;height:75px;" > 
         <p>Making internal knowledge sharing simple.</p>
 		<a class="btn btn-success" href="{{ url_for('root.company_signup') }}">Get started</a>
-        <a class
+        </center>
     </div>
     <div class="row">
         <div class="col-sm-4">
             <h1>Easily accessible</h1>
-            <p>nol-ij makes information easily accessible to everybody within your organization. Create teams and share knowledge seamlessly.</p>
+            <p>{nol-ij} makes information easily accessible to everybody within your organization. Create teams and share knowledge seamlessly.</p>
         </div>
         <div class="col-sm-4">
             <h1>Secure</h1>
             <p>Allow access to teams, folios, and pages on a per-user basis.</p>
         </div>
         <div class="col-sm-4">
-            <h1>Usability at the core</h1>
-            <p>Use Markdown to write beautiful, accessible documents. Preview your writeup on the fly.</p>
+            <h1>Productivity at the core</h1>
+            <p>Use our custom text editor to work parallely with a colleague on the same editor, incorporating Markdown to produce beautiful and accessible documents. Preview your writeup on the fly, and leave comments for your peers on their documents!</p>
         </div>
+    </div>
+    <div class = "column">
+        <div class = "row"> 
+            <div class = "col-sm-4">
+                <h1>Automated</h1>
+                <p> Our software does the busy work for you! From automatically tagging documents based on context, to recommeding useful pages you might want to consult, {nol-ij} will provide you with everything you need right at your fingertips. </p>
+            </div>
+            <div class = "col-sm-4">
+                <h1>No Stress</h1>
+                <p> We'll automatically help you move to {nol-ij} from your current status, and you'll be able to use many of your other applications alongside {nol-ij} as well. </p>
+            </div>
+            <div class = "col-sm-4">
+                <h1>Useful</h1>
+                <p> This software was created due to the problems we found in our industry and academic experiences. We've built this product to help remedy those problems. It's worked for us, and we hope that you will feel the same way! </p>
+            </div>
+        </div>  
     </div>
 </div>
 {% endblock %}
