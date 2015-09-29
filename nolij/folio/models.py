@@ -12,7 +12,6 @@ from sqlalchemy_utils.types import TSVectorType
 team_members = db.Table('team_members',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('team_id', db.Integer(), db.ForeignKey('team.id')))
-
 # Association table for folio<->users (admins)
 folio_administrators = db.Table('folio_adminstrators' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
