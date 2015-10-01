@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-StringMatcher.py
-ported from python-Levenshtein
-[https://github.com/miohtama/python-Levenshtein]
-"""
 
 from Levenshtein import *
 from warnings import warn
