@@ -21,7 +21,7 @@ def folio_access_control(layers=['team', 'folio', 'page']):
                 if team is None:
                     flash('Team does not exist')
                     return redirect(url_for('folio.dashboard'))
-                if current_user not in team.members:
+                if current_user not in team.members and team.private == True:
                     flash('You do not have permission to view this team')
                     return redirect(url_for('folio.dashboard'))
                 else:

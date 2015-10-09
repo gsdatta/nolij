@@ -1,7 +1,7 @@
 from nolij.database import db
 from flask import current_app
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin
-from nolij.folio.models import team_members
+from nolij.folio.models import team_members, Team
 import logging
 
 
@@ -49,11 +49,14 @@ class User(db.Model, UserMixin):
                 }
 
     def team_ids(self):
-        return [team.id for team in self.teams]
+        return [team.id for team in self.team_list]
 
     def is_authenticated(self):
         return self.is_authenticated
 
+    @property
+    def teams(self):
+        return self.team_list + Team.query.filter_by(company_id=self.company_id, private=False).all()
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)

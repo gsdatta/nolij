@@ -1,5 +1,6 @@
 flask
 flask-security
+flask-login<0.3.0
 flask-sqlalchemy
 pylint
 gunicorn
@@ -7,4 +8,4 @@ gevent
 psycopg2
 bcrypt
 flask_script
-sqlalchemy-searchable
+sqlalchemy_searchable

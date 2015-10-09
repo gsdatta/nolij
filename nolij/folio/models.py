@@ -96,7 +96,7 @@ class Team(SlugMixin, db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
-    members = db.relationship("User", secondary=team_members, backref="teams")
+    members = db.relationship("User", secondary=team_members, backref="team_list")
     administrators = db.relationship("User", secondary=team_administrators)
     private = db.Column(db.Boolean(), default=False, nullable=False)
 
