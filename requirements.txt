@@ -1,5 +1,6 @@
 flask
 flask-security
+flask-login<0.3.0
 flask-sqlalchemy
 pylint
 gunicorn
@@ -10,5 +11,9 @@ bcrypt
 flask-markdown
 =======
 flask_script
+<<<<<<< HEAD
 sqlalchemy-searchable
 >>>>>>> bc6f77ce17aabf4b5b42e166187a51b07f3e032e
+=======
+sqlalchemy_searchable
+>>>>>>> c467c6679ed7e51c0489c4f468aefdac533ce488

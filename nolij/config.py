@@ -5,7 +5,11 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+<<<<<<< HEAD
     SQLALCHEMY_DATABASE_URI = "postgres://aditya:temp@localhost:5432/nolij"
+=======
+    SQLALCHEMY_DATABASE_URI = "postgres://postgres@localhost/nolij"
+>>>>>>> c467c6679ed7e51c0489c4f468aefdac533ce488
     SECRET_KEY = 'woahimabadass'
     PORT = 5000
     SECURITY_PASSWORD_HASH = 'bcrypt'

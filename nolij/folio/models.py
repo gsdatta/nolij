@@ -112,6 +112,7 @@ class Team(SlugMixin, db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
 <<<<<<< HEAD
+<<<<<<< HEAD
     members = db.relationship("User", secondary=team_members)
     slug = db.Column(db.String(), nullable=False)
     company_id = db.Column(db.Integer(), db.ForeignKey("company.id"))
@@ -123,6 +124,9 @@ class Team(SlugMixin, db.Model):
 =======
     members = db.relationship("User", secondary=team_members, backref="teams")
 >>>>>>> 691fcdc85a3369e8d1b10f797164e17002503566
+=======
+    members = db.relationship("User", secondary=team_members, backref="team_list")
+>>>>>>> c467c6679ed7e51c0489c4f468aefdac533ce488
     administrators = db.relationship("User", secondary=team_administrators)
     private = db.Column(db.Boolean(), default=False, nullable=False)
 
