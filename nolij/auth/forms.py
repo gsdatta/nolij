@@ -7,12 +7,9 @@ from flask_wtf import Form
 class UserRegistrationForm(Form):
     name = StringField('Full Name', [validators.InputRequired()])
     email = StringField('Email', [validators.InputRequired(), validators.Email()])
-    password = PasswordField('Password', [validators.InputRequired(), validators.EqualTo('confirm', message='Passwords must match')])
-    confirm  = PasswordField('Repeat Password')
-
+    password = PasswordField('Password', [validators.InputRequired(), validators.EqualTo('confirm', message='Please enter the same password!')])
+    confirm = PasswordField('Repeat Password')
     def validate_email(form, field):
         user = User.query.filter_by(email=field.data).first()
         if user is not None:
-            raise validators.ValidationError('A user with this email already exists.')
-
-
+            raise validators.ValidationError('A user with this email already exists')

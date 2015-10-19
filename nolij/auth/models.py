@@ -10,7 +10,6 @@ roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
-
 class Role(db.Model, RoleMixin):
     """
     This is to be used in the future when role based authentication is
@@ -57,6 +56,5 @@ class User(db.Model, UserMixin):
     @property
     def teams(self):
         return self.team_list + Team.query.filter_by(company_id=self.company_id, private=False).all()
-
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)

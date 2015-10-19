@@ -2,11 +2,17 @@
 {% block body %}
 <div class="container">
     <div class="jumbotron">
-        <h1>{nol-ij}</h1>
-        <p>Making internal knowledge sharing simple.</p>
-		<a class="btn btn-success" href="{{ url_for('root.company_signup') }}">Get started</a>
+        <div align = "center"> 
+            <h1> {nol-ij}</h1>
+            <p>Making internal knowledge sharing simple.</p>
+    		<a class="btn btn-success" href="{{ url_for('root.company_signup') }}">Get started</a>
+        </div>
     </div>
     <div class="row">
+        <div class="col-sm-4">
+            <h1>Living Documentation</h1>
+            <p>Let us take care of updating your portal. All you have to do is take care of the work that matters most to your company!</p>
+        </div>
         <div class="col-sm-4">
             <h1>Easily accessible</h1>
             <p>nol-ij makes information easily accessible to everybody within your organization. Create teams and share knowledge seamlessly.</p>
@@ -18,6 +24,9 @@
         <div class="col-sm-4">
             <h1>Usability at the core</h1>
             <p>Use Markdown to write beautiful, accessible documents. Preview your writeup on the fly.</p>
+        </div>
+        <div class = "col-sm-4">
+            
         </div>
     </div>
 </div>

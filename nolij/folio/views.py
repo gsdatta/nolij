@@ -18,15 +18,6 @@ def dashboard():
     teams = current_user.teams
     return render_template("folio/dashboard.html", teams=teams)
 
-<<<<<<< HEAD
-@FOLIO.route('/dashboard/<team_slug>', methods = ['GET'])
-@team_access
-@login_required
-def internaldashboard():
-    user = Team.query.filter.by(company_id=current_user.company_id).all() 
-    return render_template("folio/dashboard/<team_slug>.html", teams= teams)
-=======
->>>>>>> 691fcdc85a3369e8d1b10f797164e17002503566
 
 @FOLIO.route('/add_team', methods=['GET', 'POST'])
 @login_required
