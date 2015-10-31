@@ -1,5 +1,4 @@
 # nolij
-# {nol-ij} 
 <PROJECT DESCRIPTION>
 ## Mission Statement
 Secure and team centered information sharing made easy. 
