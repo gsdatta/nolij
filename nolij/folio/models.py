@@ -63,11 +63,9 @@ class SlugMixin(object):
         """
         if not self.slug:
             self.slug = slugify(field)
-
         # If this slug is unique, go ahead and skip the loop
         success = self.query.filter_by(slug=self.slug).first() is None
         new_slug = self.slug
-
         # Loop continually until the correct slug has been found
         i = 2
         while not success:
@@ -78,7 +76,6 @@ class SlugMixin(object):
                 success = True
             else:
                 i = i + 1
-
         self.slug = new_slug
 
 
@@ -94,7 +91,8 @@ class Team(SlugMixin, db.Model):
     members = db.relationship("User", secondary=team_members, backref="teams")
     administrators = db.relationship("User", secondary=team_administrators)
     private = db.Column(db.Boolean(), default=False, nullable=False)
-
+    administrators = db.relationship("User", secondary=team_administrators)
+    public = db.Column(db.Boolean(), default =False, nullable=False)
     # Company
     company_id = db.Column(db.Integer(), db.ForeignKey("company.id"))
     company = db.relationship("Company")
@@ -144,8 +142,7 @@ class Page(SlugMixin, db.Model):
 
     def users_with_access(self):
         return [member.id for member in self.folio.team.members]
-
-
+ 
 # ****************************** Event Listeners for Slugs ******************************
 
 @listens_for(Folio, 'before_insert')
