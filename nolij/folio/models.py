@@ -26,7 +26,6 @@ page_contribs = db.Table('page_contribs' ,
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('page_id', db.Integer(), db.ForeignKey('page.id')))
 
-
 # class TeamMembers(db.Model):
 #     __tablename__ = 'team_members'
 #     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)

@@ -17,8 +17,6 @@ FOLIO = Blueprint('folio', __name__)
 def dashboard():
     teams = current_user.teams
     return render_template("folio/dashboard.html", teams=teams)
-
-
 @FOLIO.route('/add_team', methods=['GET', 'POST'])
 @login_required
 def add_team():
@@ -103,7 +101,6 @@ def folio_details(team_slug, folio_slug):
         if team is None or folio is None:
             flash('That team or folio does not exist. Please create it')
             return redirect(url_for('folio.dashboard'))
-
         page = Page.query.filter_by(folio_id=folio.id, main_page=True).first()
         return render_template("page/page_details.html", folio=folio, team=team, page=page)
 
