@@ -11,3 +11,5 @@ class CompanyForm(Form):
         company = Company.query.filter_by(domain=field.data).first()
         if company is not None:
             raise validators.ValidationError('A company with this domain already exists.')
+
+

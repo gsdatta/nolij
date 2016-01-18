@@ -1,10 +1,21 @@
 import random
-from os import path 
 import sys
 import math 
-import NLTK
-from operator import itemgetter
 from collections import defaultdict
+from wtforms import validators
+
+company_name = " "
+
+
+if company_name is None:
+    raise validators.ValidationError('Company does not exist! Please create a company first.')
+
+
+def readCorpus(f):
+    if os.path.isfile(f):
+        file = open(f,"r")
+
+    len(names.split(" "))
 
 def readFolio(f):
     if os.path.isfile(f):
